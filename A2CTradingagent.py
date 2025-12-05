@@ -540,7 +540,7 @@ class VIXTraderAgent:
 
         target_contracts = int(round(target_notional / contract_notional))
         current_contracts = algo.Portfolio[symbol].Quantity
-        delta = target_contracts - current_contracts
+        delta = target_contracts - current_contracts # *2.6
 
         if delta != 0:
             algo.MarketOrder(symbol, delta)
@@ -705,7 +705,7 @@ class ESHedgeAgent:
             vx_exposure = float(algo.Portfolio[self.trader.front_contract_symbol].Quantity)
 
         self.current_obs[0] = vx_exposure
-    def UpdateFromReward(self, current_equity: float, train_phase: bool):
+    def UpdateFromReward(self, current_equity: float, train_phase: bool): #implements leanring step, both recieve same reward - important to cooperative RL
         """
         Same pattern as VIX trader: one-step actor–critic update using
         equity delta as reward.
@@ -740,7 +740,7 @@ class ESHedgeAgent:
         self.last_equity = current_equity
 
     # ----- Decide and act -----
-    def DecideAndAct(self, train_phase: bool):
+    def DecideAndAct(self, train_phase: bool): #decides on which action to choose, Note: action is an index which will correspond to hedge ratio (first line of class)
         algo = self.algorithm
 
         if not self.has_state or self.current_obs is None:
